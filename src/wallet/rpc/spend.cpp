@@ -226,18 +226,64 @@ RPCHelpMan asendtoaddress()
     
     address_amounts.pushKV(address, request.params[2]);
 
-    CTxDestination dest = DecodeDestination(address);
-    CTxDestination dest2 = DecodeDestination("bcrt1qfpq0twdnltxgs3w4l4uv8wxwuecml2rzh2r2vm");
-    isminetype mine = pwallet->IsMine(dest);
-    isminetype mine2 = pwallet->IsMine(dest2);
-    //ret.pushKV("ismine", bool(mine & ISMINE_SPENDABLE));
-    std::cout << mine << std::endl;
-    std::cout << bool(mine2 & ISMINE_SPENDABLE) << std::endl;
+    CTxDestination from = DecodeDestination(address);
+
+    isminetype mine = pwallet->IsMine(from);
+    if (!mine) {
+        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, "From btc address is not mine.");
+    }
 
 
+    // CTxDestination dest = DecodeDestination(address);
+    // CTxDestination dest2 = DecodeDestination("bcrt1qfpq0twdnltxgs3w4l4uv8wxwuecml2rzh2r2vm");
+    // isminetype mine = pwallet->IsMine(dest);
+    // isminetype mine2 = pwallet->IsMine(dest2);
+    // //ret.pushKV("ismine", bool(mine & ISMINE_SPENDABLE));
+    // std::cout << mine << std::endl;
+    // std::cout << bool(mine2 & ISMINE_SPENDABLE) << std::endl;
 
 
+      int64_t tx_amount = 0;
+      int a = 0;
+         
+        for (const auto& entry : pwallet->mapWallet) {
+            a = a + 1;
+            //std::cout << std::to_string(a) + " for in "+ "\n";
+            const CWalletTx& wtx = entry.second;
+            
+            if(wtx.tx->transactionType == "account" || wtx.tx->vout[0].transactionType == "coinbase_account" ){
+                CTxDestination dest = DecodeDestination(wtx.tx->address_to);
+                // std::cout << "not for in"  + wtx.tx->amount+ "\n";
+                 std::cout << "[balance] tx type is = "  + wtx.tx->transactionType + "\n";
+                 isminetype mine = pwallet->IsMine(dest);
     
+                if(pwallet->IsMine(dest)){
+                    //increase
+                    tx_amount += stoi(wtx.tx->amount);
+                }
+                CTxDestination from = DecodeDestination(wtx.tx->address_from);
+                 std::cout << "not for in"  + wtx.tx->address_from + "\n";
+                if(pwallet->IsMine(from)){
+                    //decrease
+                    tx_amount -= stoi(wtx.tx->amount);
+                }
+
+                //coinbase
+                CTxDestination generatetoaddress = DecodeDestination(wtx.tx->vout[0].vout_address_to);
+   
+                if(pwallet->IsMine(generatetoaddress)){
+                    //increase
+                   tx_amount += wtx.tx->vout[0].nValue / COIN ;
+                }
+                    
+            }
+        }
+
+
+    if (tx_amount == 0 ) {
+        throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, "account amount is Insufficient funds");
+    }
+   
     UniValue subtractFeeFromAmount(UniValue::VARR);
     if (fSubtractFeeFromAmount) {
         subtractFeeFromAmount.push_back(address);
