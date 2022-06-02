@@ -35,17 +35,20 @@ Help for using each is described below.
         3. bitcoin-cli getnewaddress
         (get new btc address )
 
-        4. bitcoin-cli agetbalance (confirm it is 0.)
+        4. bitcoin-cli agetbalance 
+        (confirm it is 0.)
 
         5.bitcoin-cli generatetoaddress 101 > /dev/null
 
-        6.bitcoin-cli agetbalance (onfirm it is 5050.0000000000)
+        6.bitcoin-cli agetbalance 
+        (confirm it is 5050.0000000000.)
 
         7. bitcoin-cli asendtoaddress [new btc address] [dummy btc address
         (ex:bcrt1q0hqq9yh3j768yw38zd7lslp24m98ze930hwqrc)] 1
 
-        8. bitcoin-cli agetbalance (confirm it is 5049.0000000000)
+        8. bitcoin-cli agetbalance 
+        (confirm it is 5049.0000000000.)
 
         9. bitcoin-cli asendtoaddress [dummy btc address(ex:bcrt1q0hqq9yh3j768yw38zd7lslp24m98ze930hwqrc)] [new btc address] 1
-        
+
         (Confirm it is ERROR.)
