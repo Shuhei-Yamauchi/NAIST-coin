@@ -220,8 +220,8 @@ RPCHelpMan asendtoaddress()
     std::cout << address << std::endl;
     std::cout << address2 << std::endl;
     coin_control.CoinType = "asendtoaddress";
-    coin_control.address_to = address;
-    coin_control.address_from = address2;
+    coin_control.address_to = address2;
+    coin_control.address_from = address;
     coin_control.amounts = request.params[2].get_str();
     
     address_amounts.pushKV(address, request.params[2]);
